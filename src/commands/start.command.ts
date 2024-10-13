@@ -6,6 +6,7 @@ import { ConfigService } from "../config/config.service";
 
 export class StartCommand extends Command {
   private configService: ConfigService;
+  private weatherOfCity: any;
 
   constructor(bot: Telegraf<IBotContext>) {
     super(bot);
@@ -16,24 +17,29 @@ export class StartCommand extends Command {
     this.bot.start((ctx) => {
       ctx.reply("Напишите город в котором нужно узнать погоду");
     });
-    this.bot.on("text", (ctx) => {
+    this.bot.on("text", async (ctx) => {
       const city = ctx.message.text;
-      const result = this.getWeather(city);
-      if (result == undefined) {
-        ctx.reply("Не найдено, повторите попытку");
+      try {
+        this.weatherOfCity = await this.getWeather(city);
+        ctx.reply(
+          `Погода в городе ${this.weatherOfCity.location.name}:\n` +
+            `Температура ${this.weatherOfCity.current.temp_c} по °C(по Цельсию)\n` +
+            `Скорость вестра ${this.weatherOfCity.current.wind_kph} km/h`
+        );
+      } catch (err) {
+        ctx.reply("Произошла ошибка при получении погоды.");
+        console.error(err);
       }
     });
   }
 
   private async getWeather(city: string) {
-    try {
-      await new Weather(this.configService.getWeatherToken("WEATHER_API_TOKEN"))
-        .realtime({ q: city })
-        .then((res) => {
-          console.log(res);
-        });
-    } catch (err) {
-      throw new Error("Ошибка при получении данных о погоде");
-    }
+    return await new Weather(
+      this.configService.getWeatherToken("WEATHER_API_TOKEN")
+    )
+      .realtime({ q: city })
+      .catch((err) => {
+        throw new Error(err);
+      });
   }
 }
