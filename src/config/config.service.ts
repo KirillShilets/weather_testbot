@@ -15,7 +15,15 @@ export class ConfigService implements IConfigService {
     this.config = parsed;
   }
 
-  get(key: string): string {
+  getWeatherToken(key: string): string {
+    const res = this.config[key];
+    if (!res) {
+      throw new Error("Нет такого ключа");
+    }
+    return res;
+  }
+
+  getBotToken(key: string): string {
     const res = this.config[key];
     if (!res) {
       throw new Error("Нет такого ключа");

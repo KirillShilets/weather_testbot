@@ -1,3 +1,4 @@
 export interface IConfigService {
-  get(key: string): string;
+  getBotToken(key: string): string;
+  getWeatherToken(key: string): string;
 }
