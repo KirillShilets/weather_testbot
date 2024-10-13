@@ -13,7 +13,8 @@
   "dependencies": {
     "dotenv": "^16.4.5",
     "telegraf": "^4.16.3",
-    "telegraf-session-local": "^2.1.1"
+    "telegraf-session-local": "^2.1.1",
+    "weather-api.ts": "^1.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.12.0",
