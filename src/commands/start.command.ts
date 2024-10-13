@@ -24,10 +24,12 @@ export class StartCommand extends Command {
         ctx.reply(
           `Погода в городе ${this.weatherOfCity.location.name}:\n` +
             `Температура ${this.weatherOfCity.current.temp_c} по °C(по Цельсию)\n` +
-            `Скорость вестра ${this.weatherOfCity.current.wind_kph} km/h`
+            `Скорость ветра ${this.weatherOfCity.current.wind_kph} km/h\n` +
+            `Влажность ${this.weatherOfCity.current.humidity}%\n` +
+            `На данный момент: ${this.weatherOfCity.current.condition.text}`
         );
       } catch (err) {
-        ctx.reply("Произошла ошибка при получении погоды.");
+        ctx.reply("Произошла ошибка при получении погоды");
         console.error(err);
       }
     });
@@ -35,7 +37,8 @@ export class StartCommand extends Command {
 
   private async getWeather(city: string) {
     return await new Weather(
-      this.configService.getWeatherToken("WEATHER_API_TOKEN")
+      this.configService.getWeatherToken("WEATHER_API_TOKEN"),
+      "ru"
     )
       .realtime({ q: city })
       .catch((err) => {
